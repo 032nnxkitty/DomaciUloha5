@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DomaciUloha5
 {
-    class Taxi
+    public class Taxi
     {
         public string SPZ { get; }
 
@@ -27,7 +27,7 @@ namespace DomaciUloha5
 
             if (pocet <= 0)
             {
-                Console.WriteLine("Nemozne nalozit mensi nez 1 pasazera");
+                Console.WriteLine("Nemozne nakladat mensi nez 1 pasazera");
                 return;
             }
 
@@ -40,12 +40,12 @@ namespace DomaciUloha5
                 }
                 else if (pocet > MaxPocetPasazeru)
                 {
-                    Console.WriteLine($"Nelze nalozit pasazeru vetsi nez {MaxPocetPasazeru}");
+                    Console.WriteLine($"Nelze nakladat pasazeru vetsi nez {MaxPocetPasazeru}");
                 }
             }
             else if (PocetPasazeru > 0)
             {
-                Console.WriteLine($"V auto {SPZ} nelze nalozit pasazery, protoze uz nejaci uvnitr");
+                Console.WriteLine($"V auto {SPZ} nelze nakladat pasazery, protoze uz nejaci uvnitr");
             }
         }
 
@@ -59,13 +59,13 @@ namespace DomaciUloha5
 
             if (pocet <= 0)
             {
-                Console.WriteLine("Nemozne vylozit mensi nez 1 pasazera");
+                Console.WriteLine("Nemozne vykladat mensi nez 1 pasazera");
                 return;
             }
 
             if (pocet > PocetPasazeru)
             {
-                Console.WriteLine("Nemozne vylozit vice pasazeru nez je v aute");
+                Console.WriteLine("Nemozne vykladat vice pasazeru nez je v aute");
                 return;
             }
 
@@ -80,6 +80,7 @@ namespace DomaciUloha5
                 Console.WriteLine("Nelze zaparkovat auto s pasazery");
                 return;
             }
+
             if (Garaz.garaz.Contains(this))
             {
                 Console.WriteLine($"Auto {SPZ} uz uspesne zaparkovano");
@@ -111,7 +112,7 @@ namespace DomaciUloha5
         }
     }
 
-    class Dodavka : Taxi
+    public class Dodavka : Taxi
     {
         public Dodavka(string spz) : base(spz)
         {
@@ -121,7 +122,7 @@ namespace DomaciUloha5
 
         private const int maxVahaNakladu = 100;
 
-        public int pocetBloku;
+        private int pocetBloku;
 
         private List<int> bloky = new List<int>();
 
@@ -141,7 +142,7 @@ namespace DomaciUloha5
 
             if (zbozi > maxVahaNakladu)
             {
-                Console.WriteLine($"Nelze nalozit vetsi nez {maxVahaNakladu} zbozi");
+                Console.WriteLine($"Nelze nakladat vetsi nez {maxVahaNakladu} zbozi");
                 return;
             }
 
@@ -169,7 +170,7 @@ namespace DomaciUloha5
 
             if (pocetBloku == 0)
             {
-                Console.WriteLine("Auto je prazdne, neni co vylozit");
+                Console.WriteLine("Auto je prazdne, neni co vykladat");
                 return;
             }
 
@@ -185,11 +186,12 @@ namespace DomaciUloha5
                 Console.WriteLine("Nelze zaparkovat nalozene auto");
                 return;
             }
+
             base.Zaparkovat();
         }
     }
 
-    static class Garaz
+    public static class Garaz
     {
         public static List<Taxi> garaz = new List<Taxi>();
 
@@ -203,18 +205,172 @@ namespace DomaciUloha5
         }
     }
 
-    class Program
+    public class Program
     {
-        static void Main()
+        public static void Main()
         {
-            Taxi taxi1 = new Taxi("1C62041");
-            Taxi taxi2 = new Taxi("2C31598");
-            Taxi taxi3 = new Taxi("3C54121");
-            Taxi taxi4 = new Taxi("4C11055");
-            Taxi taxi5 = new Taxi("5C29876");
-            Dodavka dodavka1 = new Dodavka("1D39032");
-            Dodavka dodavka2 = new Dodavka("2D00232");
-            Dodavka dodavka3 = new Dodavka("3D39454");
+            NakladaniPasazeruVTaxi();
+            
+            VykladaniPasazeruZTaxi();
+            
+            NakladaniPasazeruVDodavku();
+            
+            VykladaniPasazeruZDodavky();
+            
+            NakldaniAVykladaniZbozi();
+            
+            ParkovaniAut();
+
+            Console.ReadKey();
+        }
+
+        public static void NakladaniPasazeruVTaxi()
+        {
+            PrintExamplesSeparator();
+            
+            Taxi taxi1 = new Taxi("1C52098");
+            taxi1.NalozitPasazery(3);
+            taxi1.NalozitPasazery(1);
+            taxi1.Zaparkovat();
+
+            PrintExamplesSeparator();
+            
+            Taxi taxi2 = new Taxi("2C45621");
+            taxi2.NalozitPasazery(5);
+            taxi2.NalozitPasazery(0);
+        }
+
+        public static void VykladaniPasazeruZTaxi()
+        {
+            PrintExamplesSeparator();
+
+            Taxi taxi1 = new Taxi("1C40092");
+            taxi1.NalozitPasazery(4);
+            taxi1.VylozitPasazery(4);
+            
+            PrintExamplesSeparator();
+
+            Taxi taxi2 = new Taxi("2C89778");
+            taxi2.NalozitPasazery(4);
+            taxi2.VylozitPasazery(1);
+            taxi2.VylozitPasazery(1);
+            taxi2.VylozitPasazery(1);
+            taxi2.VylozitPasazery(1);
+            
+            PrintExamplesSeparator();
+
+            Taxi taxi3 = new Taxi("3C21389");
+            taxi3.NalozitPasazery(3);
+            taxi3.VylozitPasazery(5);
+            taxi3.VylozitPasazery(0);
+        }
+
+        public static void NakladaniPasazeruVDodavku()
+        {
+            PrintExamplesSeparator();
+
+            Dodavka dodavka1 = new Dodavka("1D30091");
+            dodavka1.NalozitPasazery(1);
+            dodavka1.NalozitPasazery(1);
+            
+            PrintExamplesSeparator();
+            
+            Dodavka dodavka2 = new Dodavka("2D44297");
+            dodavka2.NalozitPasazery(3);
+            dodavka2.NalozitPasazery(-1);
+        }
+
+        public static void VykladaniPasazeruZDodavky()
+        {
+            PrintExamplesSeparator();
+            
+            Dodavka dodavka1 = new Dodavka("1D33321");
+            dodavka1.NalozitPasazery(2);
+            dodavka1.VylozitPasazery(1);
+            dodavka1.VylozitPasazery(1);
+            
+            PrintExamplesSeparator();
+            
+            Dodavka dodavka2 = new Dodavka("2D35777");
+            dodavka2.NalozitPasazery(2);
+            dodavka2.VylozitPasazery(-1);
+            dodavka2.VylozitPasazery(7);
+            
+        }
+
+        public static void NakldaniAVykladaniZbozi()
+        {
+            PrintExamplesSeparator();
+            
+            Dodavka dodavka1 = new Dodavka("1D12121");
+            dodavka1.NalozitZbozi(110);
+            dodavka1.NalozitZbozi(10);
+            dodavka1.NalozitZbozi(20);
+            dodavka1.NalozitZbozi(40);
+            dodavka1.NalozitZbozi(30);
+            dodavka1.NalozitZbozi(50);
+            
+            PrintExamplesSeparator();
+            
+            Dodavka dodavka2 = new Dodavka("1D12121");
+            dodavka2.VylozitZbozi();
+            dodavka2.NalozitZbozi(10);
+            dodavka2.NalozitZbozi(70);
+            dodavka2.NalozitZbozi(20);
+            dodavka2.VylozitZbozi();
+            dodavka2.VylozitZbozi();
+            dodavka2.VylozitZbozi();
+        }
+
+        public static void ParkovaniAut()
+        {
+            PrintExamplesSeparator();
+
+            Taxi taxi11 = new Taxi("1C1111");
+            Taxi taxi22 = new Taxi("2C22222");
+            Taxi taxi33 = new Taxi("3C33333");
+            Dodavka dodavka11 = new Dodavka("1D12345");
+            Dodavka dodavka22 = new Dodavka("2D54321");
+            
+            Dodavka dodavka33 = new Dodavka("3D12321");
+            taxi11.Zaparkovat();
+            taxi22.Zaparkovat();
+            taxi33.Zaparkovat();
+            dodavka11.Zaparkovat();
+            dodavka22.Zaparkovat();
+            dodavka22.Zaparkovat();
+            dodavka33.Zaparkovat();
+            
+            PrintExamplesSeparator();
+            
+            Garaz.StavObsazenosti();
+            
+            PrintExamplesSeparator();
+            
+            Taxi taxi1 = new Taxi("1C67762");
+            taxi1.Vyparkovat();
+            taxi1.Zaparkovat();
+            taxi1.Vyparkovat();
+
+            PrintExamplesSeparator();
+            
+            Taxi taxi2 = new Taxi("2C90004");
+            taxi2.NalozitPasazery(3);
+            taxi2.Zaparkovat();
+            
+            PrintExamplesSeparator();
+
+            Dodavka dodavka = new Dodavka("1D45555");
+            dodavka.NalozitZbozi(12);
+            dodavka.NalozitZbozi(62);
+            dodavka.NalozitZbozi(9);
+            dodavka.Zaparkovat();
+            
+
+        }
+        static void PrintExamplesSeparator()
+        {
+            Console.WriteLine("\n---------------NEW EXAMPLE----------------\n");
         }
     }
 }
