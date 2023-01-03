@@ -1,0 +1,220 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace DomaciUloha5
+{
+    class Taxi
+    {
+        public string SPZ { get; }
+
+        public Taxi(string spz)
+        {
+            SPZ = spz;
+        }
+
+        protected int PocetPasazeru { get; set; }
+
+        protected virtual int MaxPocetPasazeru { get; } = 4;
+
+        public void NalozitPasazery(int pocet)
+        {
+            if (Garaz.garaz.Contains(this))
+            {
+                Console.WriteLine("V garazi nelze nakladat pasazery");
+                return;
+            }
+
+            if (pocet <= 0)
+            {
+                Console.WriteLine("Nemozne nalozit mensi nez 1 pasazera");
+                return;
+            }
+
+            if (PocetPasazeru == 0)
+            {
+                if (pocet <= MaxPocetPasazeru)
+                {
+                    Console.WriteLine($"V auto {SPZ} bylo nalozeno {pocet} pasazeru");
+                    PocetPasazeru += pocet;
+                }
+                else if (pocet > MaxPocetPasazeru)
+                {
+                    Console.WriteLine($"Nelze nalozit pasazeru vetsi nez {MaxPocetPasazeru}");
+                }
+            }
+            else if (PocetPasazeru > 0)
+            {
+                Console.WriteLine($"V auto {SPZ} nelze nalozit pasazery, protoze uz nejaci uvnitr");
+            }
+        }
+
+        public void VylozitPasazery(int pocet)
+        {
+            if (Garaz.garaz.Contains(this))
+            {
+                Console.WriteLine("V garazi nelze vykladat pasazery");
+                return;
+            }
+
+            if (pocet <= 0)
+            {
+                Console.WriteLine("Nemozne vylozit mensi nez 1 pasazera");
+                return;
+            }
+
+            if (pocet > PocetPasazeru)
+            {
+                Console.WriteLine("Nemozne vylozit vice pasazeru nez je v aute");
+                return;
+            }
+
+            PocetPasazeru -= pocet;
+            Console.WriteLine($"Z auta {SPZ} bylo vylozeno {pocet} pasazeru");
+        }
+
+        public virtual void Zaparkovat()
+        {
+            if (PocetPasazeru > 0)
+            {
+                Console.WriteLine("Nelze zaparkovat auto s pasazery");
+                return;
+            }
+            if (Garaz.garaz.Contains(this))
+            {
+                Console.WriteLine($"Auto {SPZ} uz uspesne zaparkovano");
+                return;
+            }
+
+            if (Garaz.garaz.Count < 5)
+            {
+                Garaz.garaz.Add(this);
+                Console.WriteLine($"Auto {SPZ} bylo zaparkovano");
+            }
+            else
+            {
+                Console.WriteLine($"Parkoviste je jiz plne, nelze zaparkovat {SPZ}");
+            }
+        }
+
+        public virtual void Vyparkovat()
+        {
+            if (Garaz.garaz.Contains(this))
+            {
+                Garaz.garaz.Remove(this);
+                Console.WriteLine($"Auto {SPZ} bylo vyparkovano");
+            }
+            else
+            {
+                Console.WriteLine($"Auto {SPZ} jeste nezaparkovano, aby bylo vyparkovano");
+            }
+        }
+    }
+
+    class Dodavka : Taxi
+    {
+        public Dodavka(string spz) : base(spz)
+        {
+        }
+
+        protected override int MaxPocetPasazeru { get; } = 2;
+
+        private const int maxVahaNakladu = 100;
+
+        public int pocetBloku;
+
+        private List<int> bloky = new List<int>();
+
+        public void NalozitZbozi(int zbozi)
+        {
+            if (Garaz.garaz.Contains(this))
+            {
+                Console.WriteLine("Nelze nakladat auto, kdyz je v garazi");
+                return;
+            }
+
+            if (zbozi <= 0)
+            {
+                Console.WriteLine($"Nelze zadavat cisla ktera menzi nez 0");
+                return;
+            }
+
+            if (zbozi > maxVahaNakladu)
+            {
+                Console.WriteLine($"Nelze nalozit vetsi nez {maxVahaNakladu} zbozi");
+                return;
+            }
+
+            if (bloky.Sum() + zbozi > maxVahaNakladu)
+            {
+                Console.WriteLine($"Celkova vaha nakladu nemuze byt {bloky.Sum() + zbozi}");
+                return;
+            }
+
+            if (bloky.Sum() + zbozi <= maxVahaNakladu)
+            {
+                pocetBloku += 1;
+                bloky.Add(zbozi);
+                Console.WriteLine($"Nalozil jsi {zbozi} zbozi v {pocetBloku}. bloku");
+            }
+        }
+
+        public void VylozitZbozi()
+        {
+            if (Garaz.garaz.Contains(this))
+            {
+                Console.WriteLine("Nelze vykladat auto, kdyz je v garazi");
+                return;
+            }
+
+            if (pocetBloku == 0)
+            {
+                Console.WriteLine("Auto je prazdne, neni co vylozit");
+                return;
+            }
+
+            Console.WriteLine($"Vylozil jsi {pocetBloku}. blok - {bloky[pocetBloku - 1]}");
+            bloky.RemoveAt(pocetBloku - 1);
+            pocetBloku -= 1;
+        }
+
+        public override void Zaparkovat()
+        {
+            if (pocetBloku > 0)
+            {
+                Console.WriteLine("Nelze zaparkovat nalozene auto");
+                return;
+            }
+            base.Zaparkovat();
+        }
+    }
+
+    static class Garaz
+    {
+        public static List<Taxi> garaz = new List<Taxi>();
+
+        public static void StavObsazenosti()
+        {
+            Console.WriteLine("Stav obsazenosti:");
+            foreach (var auto in garaz)
+            {
+                Console.WriteLine(auto.SPZ);
+            }
+        }
+    }
+
+    class Program
+    {
+        static void Main()
+        {
+            Taxi taxi1 = new Taxi("1C62041");
+            Taxi taxi2 = new Taxi("2C31598");
+            Taxi taxi3 = new Taxi("3C54121");
+            Taxi taxi4 = new Taxi("4C11055");
+            Taxi taxi5 = new Taxi("5C29876");
+            Dodavka dodavka1 = new Dodavka("1D39032");
+            Dodavka dodavka2 = new Dodavka("2D00232");
+            Dodavka dodavka3 = new Dodavka("3D39454");
+        }
+    }
+}
